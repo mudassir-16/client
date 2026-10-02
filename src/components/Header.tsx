@@ -25,7 +25,8 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 w-full bg-[#F8F5EF]/95 backdrop-blur-sm z-50 transition-colors border-b border-[#D8D1C6]/50">
+    <>
+      <header className="sticky top-0 w-full bg-[#F8F5EF]/95 backdrop-blur-sm z-50 transition-colors border-b border-[#D8D1C6]/50">
       <div className="page-container py-4 md:py-5 flex items-center justify-between">
         {/* Brand / Logo Text Treatment */}
         <Link href="/" className="group flex flex-col transition-opacity hover:opacity-90">
@@ -109,100 +110,104 @@ export default function Header() {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#F8F5EF] z-50 flex flex-col lg:hidden animate-in fade-in duration-200">
-          {/* Mobile Header Bar */}
-          <div className="page-container py-5 flex items-center justify-between border-b border-[#D8D1C6]">
-            <Link href="/" onClick={closeMobileMenu} className="flex flex-col">
-              <span className="font-heading text-xl font-normal text-[#29332F]">
-                Dr. Maya Reynolds, PsyD
-              </span>
-              <span className="font-body text-[0.65rem] uppercase tracking-[0.16em] text-[#5F7167]">
-                Licensed Clinical Psychologist
-              </span>
-            </Link>
-            <button
-              onClick={closeMobileMenu}
-              aria-label="Close mobile menu"
-              className="p-2 text-[#29332F] hover:text-[#5F7167] focus:outline-none"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
+    {/* Mobile Menu Overlay - Rendered outside header to avoid backdrop-filter stacking trap */}
+    {mobileMenuOpen && (
+      <div 
+        className="fixed inset-0 w-screen h-screen bg-[#F8F5EF] z-[9999] flex flex-col lg:hidden"
+        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh" }}
+      >
+        {/* Mobile Header Bar */}
+        <div className="page-container py-5 flex items-center justify-between border-b border-[#D8D1C6] bg-[#F8F5EF] shrink-0">
+          <Link href="/" onClick={closeMobileMenu} className="flex flex-col">
+            <span className="font-heading text-xl font-normal text-[#29332F]">
+              Dr. Maya Reynolds, PsyD
+            </span>
+            <span className="font-body text-[0.65rem] uppercase tracking-[0.16em] text-[#5F7167]">
+              Licensed Clinical Psychologist
+            </span>
+          </Link>
+          <button
+            onClick={closeMobileMenu}
+            aria-label="Close mobile menu"
+            className="p-2 text-[#29332F] hover:text-[#5F7167] focus:outline-none"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
-          {/* Mobile Menu Links */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col justify-between">
-            {activeFolder === null ? (
-              <div className="flex flex-col space-y-4">
-                {navigationData.map((item) => {
-                  if (item.items) {
-                    return (
-                      <button
-                        key={item.label}
-                        onClick={() => setActiveFolder(item.label)}
-                        className="flex items-center justify-between text-left text-xl font-heading tracking-wide text-[#29332F] hover:text-[#5F7167] py-2.5 border-b border-[#D8D1C6]/40"
-                      >
-                        <span>{item.label}</span>
-                        <ChevronDown className="w-5 h-5 -rotate-90 text-[#5F7167]" />
-                      </button>
-                    );
-                  }
-
+        {/* Mobile Menu Links */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col justify-between bg-[#F8F5EF]">
+          {activeFolder === null ? (
+            <div className="flex flex-col space-y-3">
+              {navigationData.map((item) => {
+                if (item.items) {
                   return (
-                    <Link
+                    <button
                       key={item.label}
-                      href={item.href || "#"}
-                      onClick={closeMobileMenu}
-                      className="text-xl font-heading tracking-wide text-[#29332F] hover:text-[#5F7167] py-2.5 border-b border-[#D8D1C6]/40"
+                      onClick={() => setActiveFolder(item.label)}
+                      className="flex items-center justify-between text-left text-xl font-heading tracking-wide text-[#29332F] hover:text-[#5F7167] py-2.5 border-b border-[#D8D1C6]/40"
                     >
-                      {item.label}
-                    </Link>
+                      <span>{item.label}</span>
+                      <ChevronDown className="w-5 h-5 -rotate-90 text-[#5F7167]" />
+                    </button>
                   );
-                })}
-              </div>
-            ) : (
-              <div className="flex flex-col space-y-4">
-                <button
-                  onClick={() => setActiveFolder(null)}
-                  className="flex items-center text-xs uppercase tracking-widest text-[#5F7167] hover:text-[#29332F] mb-2 pb-2 border-b border-[#D8D1C6]"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Menu
-                </button>
-                <h3 className="font-heading text-2xl text-[#29332F] mb-1">{activeFolder}</h3>
-                {navigationData
-                  .find((item) => item.label === activeFolder)
-                  ?.items?.map((subItem) => (
-                    <Link
-                      key={subItem.label}
-                      href={subItem.href}
-                      onClick={closeMobileMenu}
-                      className="text-base text-[#29332F] hover:text-[#5F7167] py-2 pl-2 border-b border-[#D8D1C6]/40 font-light"
-                    >
-                      {subItem.label}
-                    </Link>
-                  ))}
-              </div>
-            )}
+                }
 
-            {/* Mobile Consultation CTA */}
-            <div className="pt-6 mt-6 border-t border-[#D8D1C6]">
-              <Link
-                href="#contact"
-                onClick={closeMobileMenu}
-                className="btn-primary w-full text-center py-3"
-              >
-                Schedule a Consultation
-              </Link>
-              <p className="text-center text-xs text-[#626963] mt-3 font-light">
-                Santa Monica Office • Secure California Telehealth
-              </p>
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href || "#"}
+                    onClick={closeMobileMenu}
+                    className="text-xl font-heading tracking-wide text-[#29332F] hover:text-[#5F7167] py-2.5 border-b border-[#D8D1C6]/40"
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
+          ) : (
+            <div className="flex flex-col space-y-3">
+              <button
+                onClick={() => setActiveFolder(null)}
+                className="flex items-center text-xs uppercase tracking-widest text-[#5F7167] hover:text-[#29332F] mb-2 pb-2 border-b border-[#D8D1C6]"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Menu
+              </button>
+              <h3 className="font-heading text-2xl text-[#29332F] mb-1">{activeFolder}</h3>
+              {navigationData
+                .find((item) => item.label === activeFolder)
+                ?.items?.map((subItem) => (
+                  <Link
+                    key={subItem.label}
+                    href={subItem.href}
+                    onClick={closeMobileMenu}
+                    className="text-base text-[#29332F] hover:text-[#5F7167] py-2 pl-2 border-b border-[#D8D1C6]/40 font-light"
+                  >
+                    {subItem.label}
+                  </Link>
+                ))}
+            </div>
+          )}
+
+          {/* Mobile Consultation CTA */}
+          <div className="pt-6 mt-6 border-t border-[#D8D1C6] shrink-0">
+            <Link
+              href="#contact"
+              onClick={closeMobileMenu}
+              className="btn-primary w-full text-center py-3"
+            >
+              Schedule a Consultation
+            </Link>
+            <p className="text-center text-xs text-[#626963] mt-3 font-light">
+              Santa Monica Office • Secure California Telehealth
+            </p>
           </div>
         </div>
-      )}
-    </header>
+      </div>
+    )}
+  </>
   );
 }
